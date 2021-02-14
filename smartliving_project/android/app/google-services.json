@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "808270653975",
+    "project_id": "smart-living-47023",
+    "storage_bucket": "smart-living-47023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808270653975:android:d0c99c905cee25601c8a52",
+        "android_client_info": {
+          "package_name": "com.rayson.smartliving_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808270653975-doaupndqcfebcek9utrkar8qpkmg4urf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwC35h0M5T9T3bnbDChJJRD1W_sjBrsIg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808270653975-doaupndqcfebcek9utrkar8qpkmg4urf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

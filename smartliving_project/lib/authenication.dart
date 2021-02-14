@@ -1,0 +1,63 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:smartliving_project/database.dart';
+
+class AuthenicationService {
+  final FirebaseAuth _firebaseAuth;
+
+  AuthenicationService(this._firebaseAuth);
+
+  Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
+
+  // Logout Function
+  Future<void> logOut() async {
+    await _firebaseAuth.signOut();
+  }
+
+  // Validate Password Function
+  Future<bool> validatePassword(
+      {User firebaseUser, String currentPassword}) async {
+    AuthCredential authCredentials = EmailAuthProvider.credential(
+        email: firebaseUser.email, password: currentPassword);
+    try {
+      UserCredential authResult =
+          await firebaseUser.reauthenticateWithCredential(authCredentials);
+      return authResult.user != null;
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      return null;
+    }
+  }
+
+  // Update Password Function
+  Future<void> updatePassword({User firebaseUser, String newPassword}) async {
+    firebaseUser.updatePassword(newPassword);
+  }
+
+  // Login Account Function
+  Future<String> loginAccount({String email, String password}) async {
+    try {
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      return "Success";
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      return null;
+    }
+  }
+
+  // Register Account Function
+  Future<String> registerAccount(
+      {String email, String username, int phoneNumber, String password}) async {
+    try {
+      UserCredential result = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      User user = result.user;
+      await DatabaseService(uid: user.uid)
+          .updateUserInfo(email, username, phoneNumber);
+      return "Success";
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      return null;
+    }
+  }
+}
