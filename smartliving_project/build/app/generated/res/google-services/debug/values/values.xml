@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">808270653975-doaupndqcfebcek9utrkar8qpkmg4urf.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">808270653975</string>
+    <string name="google_api_key" translatable="false">AIzaSyCwC35h0M5T9T3bnbDChJJRD1W_sjBrsIg</string>
+    <string name="google_app_id" translatable="false">1:808270653975:android:d0c99c905cee25601c8a52</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCwC35h0M5T9T3bnbDChJJRD1W_sjBrsIg</string>
+    <string name="google_storage_bucket" translatable="false">smart-living-47023.appspot.com</string>
+    <string name="project_id" translatable="false">smart-living-47023</string>
+</resources>
