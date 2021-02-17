@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartliving_project/dbdata.dart';
+import 'package:smartliving_project/dbdevicestatus.dart';
 
 class DatabaseService {
   final String uid;
-  final CollectionReference _collection =
-      FirebaseFirestore.instance.collection("smartliving");
+  final CollectionReference _userList =
+      FirebaseFirestore.instance.collection("userInfo");
+  final CollectionReference _deviceStatus =
+      FirebaseFirestore.instance.collection("deviceStatus");
 
   DatabaseService({this.uid});
 
   // Update User Info Function
   Future updateUserInfo(String email, String username, int phoneNumber) async {
-    return await _collection.doc(uid).set({
+    return await _userList.doc(uid).set({
       'email': email,
       'username': username,
       'phoneNumber': phoneNumber,
@@ -27,8 +30,22 @@ class DatabaseService {
     }).toList();
   }
 
+  List<DatabaseDeviceStatus> _deviceStatusFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return DatabaseDeviceStatus(
+        isAirConditionerOn: doc.data()['airConditionerStatus'] ?? false,
+        isLightOn: doc.data()['lightStatus'] ?? false,
+      );
+    }).toList();
+  }
+
   // Get User Info Function
   Stream<List<DatabaseData>> get userInfo {
-    return _collection.snapshots().map(_userInfoFromSnapshot);
+    return _userList.snapshots().map(_userInfoFromSnapshot);
+  }
+
+  // Get Device Status Function
+  Stream<List<DatabaseDeviceStatus>> get deviceStatus {
+    return _deviceStatus.snapshots().map(_deviceStatusFromSnapshot);
   }
 }
