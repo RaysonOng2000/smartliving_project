@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartliving_project/authenication.dart';
@@ -15,15 +16,22 @@ class ProfileBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Retrieve current user logged in
+    final firebaseUser = context.watch<User>();
+    // Variable to retrieve the user data
     final dataList = Provider.of<List<DatabaseData>>(context) ?? [];
     String email = '';
     String username = '';
     String phoneNumber = '';
 
+    // Retrieve all user records
     dataList.forEach((data) {
-      email = data.email;
-      username = data.username;
-      phoneNumber = data.phoneNumber.toString();
+      // Check if the user email is equal to the current user's email
+      if (firebaseUser.email == data.email) {
+        email = data.email;
+        username = data.username;
+        phoneNumber = data.phoneNumber.toString();
+      }
     });
 
     return ListView(
@@ -68,6 +76,7 @@ class ProfileBody extends StatelessWidget {
                   Text(
                     email,
                     style: TextStyle(
+                      fontWeight: FontWeight.normal,
                       fontSize: 18,
                       color: Colors.grey,
                     ),
@@ -81,7 +90,10 @@ class ProfileBody extends StatelessWidget {
         // End of Account Info Section
         // Button Section
         Container(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.symmetric(
+            vertical: 15.0,
+            horizontal: 0.0,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,24 +102,28 @@ class ProfileBody extends StatelessWidget {
               ProfileFlatButton(
                 Icons.edit_outlined,
                 'Edit Profile',
+                'Update your username and phone number',
                 EditProfilePage(email, username, phoneNumber),
               ),
               // Change Password Button
               ProfileFlatButton(
                 Icons.lock_outlined,
                 'Change Password',
+                'Update your password',
                 ChangePasswordPage(),
               ),
               // About Button
               ProfileFlatButton(
                 Icons.info_outlined,
                 'About',
+                'Infomation about the application',
                 AboutPage(),
               ),
               // Logout Button
               ProfileFlatButton(
                 Icons.exit_to_app_outlined,
                 'Logout',
+                'Sign out from your account',
                 WelcomePage(),
                 isLogout: true,
               ),
@@ -125,10 +141,11 @@ class ProfileBody extends StatelessWidget {
 class ProfileFlatButton extends StatelessWidget {
   final IconData icon;
   final String name;
+  final String description;
   final bool isLogout;
   final Widget page;
 
-  ProfileFlatButton(this.icon, this.name, this.page,
+  ProfileFlatButton(this.icon, this.name, this.description, this.page,
       {Key key, this.isLogout = false});
 
   // Logout Dialog
@@ -180,6 +197,8 @@ class ProfileFlatButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
+      highlightColor: Colors.grey[300],
+      // On pressed
       onPressed: () {
         // If it is not a logout button
         if (!isLogout) {
@@ -196,24 +215,52 @@ class ProfileFlatButton extends StatelessWidget {
         }
       },
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           // Icon
-          Icon(
-            this.icon,
-            color: isLogout ? Colors.red[400] : Colors.grey[700],
-            size: 30.0,
-          ),
-          SizedBox(
-            width: 35.0,
-          ),
-          // Page name
-          Text(
-            this.name,
-            style: TextStyle(
-              color: isLogout ? Colors.red : Colors.black,
-              fontSize: 16.0,
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0),
+            child: Icon(
+              this.icon,
+              color: isLogout ? Colors.red[400] : Colors.grey[700],
+              size: 35.0,
             ),
           ),
+          // End of Icon
+          SizedBox(
+            width: 30.0,
+          ),
+          // Page Name and Description
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Page Name
+              Text(
+                this.name,
+                style: TextStyle(
+                  color: isLogout ? Colors.red : Colors.black,
+                  fontSize: 16.0,
+                ),
+              ),
+              // End of Page Name
+              SizedBox(
+                height: 2.5,
+              ),
+              // Description
+              Text(
+                description,
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: isLogout ? Colors.red : Colors.grey,
+                  fontSize: 14.0,
+                ),
+              ),
+              // End of Description
+            ],
+          ),
+          // End of Page Name and Description
         ],
       ),
     );

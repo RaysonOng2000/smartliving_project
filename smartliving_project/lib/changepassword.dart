@@ -30,6 +30,19 @@ class ChangePasswordPage extends StatelessWidget {
           ),
           shrinkWrap: true,
           children: <Widget>[
+            // Heading
+            Text(
+              'Change Password',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            // End of Heading
+            SizedBox(
+              height: 30,
+            ),
             ChangePasswordForm(),
           ],
         ),

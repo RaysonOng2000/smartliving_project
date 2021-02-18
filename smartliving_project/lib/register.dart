@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartliving_project/authenication.dart';
+import 'login.dart';
 
 // Register Page
 class RegisterPage extends StatelessWidget {
@@ -27,6 +28,7 @@ class RegisterPage extends StatelessWidget {
           ),
           shrinkWrap: true,
           children: <Widget>[
+            // Heading
             Text(
               'Welcome to Smart Living',
               textAlign: TextAlign.center,
@@ -35,11 +37,46 @@ class RegisterPage extends StatelessWidget {
                 fontSize: 24,
               ),
             ),
+            // End of Heading
             SizedBox(
               height: 30,
             ),
-            // Display Register Form
+            // Register Form
             RegisterForm(),
+            // End of Register Form
+            SizedBox(
+              height: 30,
+            ),
+            // Login Link
+            Text(
+              'Already have an account?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            // Login Button
+            FlatButton(
+              padding: const EdgeInsets.all(0.0),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+              },
+              child: Text(
+                'Login Now',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.indigo,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            // End of Login Button
+            // End of Login Link
           ],
         ),
       ),
@@ -244,7 +281,7 @@ class _RegisterFormState extends State<RegisterForm> {
               // Execute if all the entered values are valid
               if (_formKey.currentState.validate()) {
                 // Attempt to create user account
-                dynamic result =
+                Future<String> result =
                     context.read<AuthenicationService>().registerAccount(
                           email: _thisEmail.currentState.value,
                           username: _thisUsername.currentState.value,
@@ -254,11 +291,14 @@ class _RegisterFormState extends State<RegisterForm> {
                         );
 
                 // Check if register is successful
-                if (await result != null) {
+                if (await result == null) {
                   // Display popup
                   registerSuccessDialog(context);
                 } else {
-                  setState(() => formMessage = 'Email already exist!');
+                  // Display error message
+                  result.then((value) {
+                    setState(() => formMessage = value);
+                  });
                 }
               }
             },

@@ -1,4 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smartliving_project/database.dart';
+import 'package:smartliving_project/dbdata.dart';
+import 'package:smartliving_project/dbdevicestatus.dart';
 
 // Import pages
 import 'device.dart';
@@ -33,6 +38,7 @@ class RoomPage extends StatelessWidget {
   }
   // End of Door Button
 
+  // Device List Function
   Widget deviceList(roomName) {
     switch (roomName) {
       case "Living Room":
@@ -78,51 +84,64 @@ class RoomPage extends StatelessWidget {
         return Column();
     }
   }
+  // End of Device List Function
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // App Bar
-      appBar: AppBar(
-        title: Text(
-          roomName,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+    return MultiProvider(
+      providers: [
+        // Retrieve Device Status
+        StreamProvider<List<DatabaseDeviceStatus>>.value(
+          value: DatabaseService().deviceStatus,
         ),
-      ),
-      // End of App Bar
-      // Body Section
-      body: ListView(
-        padding: const EdgeInsets.symmetric(
-          vertical: 50.0,
-          horizontal: 15.0,
+        // Retrieve User Info
+        StreamProvider<List<DatabaseData>>.value(
+          value: DatabaseService().userInfo,
         ),
-        shrinkWrap: true,
-        children: <Widget>[
-          deviceList(roomName),
-          SizedBox(
-            height: 30.0,
-          ),
-          // Turn off All Device Button
-          RaisedButton(
-            color: Colors.red,
-            highlightColor: Colors.red[200],
-            onPressed: () {},
-            highlightElevation: 5.0,
-            elevation: 5.0,
-            child: Text(
-              'Turn Off All Device',
-              style: TextStyle(
-                fontSize: 18,
-              ),
+      ],
+      child: Scaffold(
+        // App Bar
+        appBar: AppBar(
+          title: Text(
+            roomName,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          // End of Turn off All Device Button
-        ],
+        ),
+        // End of App Bar
+        // Body Section
+        body: ListView(
+          padding: const EdgeInsets.symmetric(
+            vertical: 50.0,
+            horizontal: 15.0,
+          ),
+          shrinkWrap: true,
+          children: <Widget>[
+            deviceList(roomName),
+            SizedBox(
+              height: 30.0,
+            ),
+            // Turn off All Device Button
+            RaisedButton(
+              color: Colors.red,
+              highlightColor: Colors.red[200],
+              onPressed: () {},
+              highlightElevation: 5.0,
+              elevation: 5.0,
+              child: Text(
+                'Turn Off All Device',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            // End of Turn off All Device Button
+          ],
+        ),
+        // End of Body Section
       ),
-      // End of Body Section
     );
   }
 }
@@ -146,6 +165,52 @@ class _DeviceButtonState extends State<DeviceButton> {
 
   @override
   Widget build(BuildContext context) {
+    // Retrieve current user logged in
+    final firebaseUser = context.watch<User>();
+    // Variable to retrieve the device records
+    final dataList = Provider.of<List<DatabaseDeviceStatus>>(context) ?? [];
+    // Assigning
+    bool isAirConditionerOn = false;
+    bool isLightOn = false;
+    bool isDoorOn = false;
+    bool isTvOn = false;
+    // For Identification purpose
+    String email = firebaseUser.email;
+    // For displaying status
+    String statusMsg = '';
+
+    dataList.forEach((data) {
+      if (email == data.email) {
+        isAirConditionerOn = data.isAirConditionerOn;
+        isLightOn = data.isLightOn;
+        isDoorOn = data.isDoorOn;
+        isTvOn = data.isTvOn;
+      }
+    });
+
+    // Assign inputs
+    switch (deviceName) {
+      case "Air Conditioner":
+        _switchValue = isAirConditionerOn;
+        break;
+      case "Lights":
+        _switchValue = isLightOn;
+        break;
+      case "Door":
+        _switchValue = isDoorOn;
+        break;
+      case "Television":
+        _switchValue = isTvOn;
+        break;
+    }
+
+    // Check for switch status to display message
+    if (_switchValue) {
+      statusMsg = 'ON';
+    } else {
+      statusMsg = 'OFF';
+    }
+
     return Padding(
       padding: EdgeInsets.only(bottom: 15.0),
       child: RaisedButton(
@@ -183,8 +248,9 @@ class _DeviceButtonState extends State<DeviceButton> {
                   ),
                   // Status
                   Text(
-                    'Connected',
+                    statusMsg,
                     style: TextStyle(
+                      fontWeight: FontWeight.normal,
                       fontSize: 16,
                       color: Colors.grey,
                     ),
@@ -198,7 +264,32 @@ class _DeviceButtonState extends State<DeviceButton> {
             Switch(
               activeColor: Colors.indigo,
               value: _switchValue,
-              onChanged: (val) {
+              onChanged: (val) async {
+                // Check the device that has been toggled
+                switch (deviceName) {
+                  case "Air Conditioner":
+                    isAirConditionerOn = val;
+                    break;
+                  case "Lights":
+                    isLightOn = val;
+                    break;
+                  case "Door":
+                    isDoorOn = val;
+                    break;
+                  case "Television":
+                    isTvOn = val;
+                    break;
+                }
+                // Update status
+                await DatabaseService(uid: firebaseUser.uid).updateDeviceStatus(
+                  firebaseUser.email,
+                  isAirConditionerOn,
+                  isLightOn,
+                  isDoorOn,
+                  isTvOn,
+                );
+
+                // Update the toggle state
                 setState(() {
                   _switchValue = val;
                 });

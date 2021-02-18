@@ -19,19 +19,15 @@ class WelcomePage extends StatelessWidget {
           shrinkWrap: true,
           children: <Widget>[
             // Logo
-            // Image.asset(
-            //   'images/logo/Logo.png',
-            //   width: 200,
-            //   height: 200,
-            // ),
-            Icon(
-              Icons.home,
-              color: Colors.indigo,
-              size: 150.0,
+            Image.asset(
+              'images/logo/Logov2.png',
+              width: 180,
+              height: 180,
+              fit: BoxFit.contain,
             ),
             // End of Logo
             SizedBox(
-              height: 15.0,
+              height: 30.0,
             ),
             // Heading and Paragraph
             Text(

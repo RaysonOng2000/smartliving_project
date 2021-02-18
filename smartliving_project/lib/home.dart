@@ -33,6 +33,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<DatabaseData>>.value(
+      // Retrieve User Info
       value: DatabaseService().userInfo,
       child: Scaffold(
         // App Bar
@@ -86,15 +87,15 @@ class HomeBody extends StatelessWidget {
         shrinkWrap: true,
         children: <Widget>[
           // Living Room Button
-          RoomButton('Living Room', Icons.tv),
+          RoomButton('Living Room', Icons.tv, 3),
           // Bed Room Button
-          RoomButton('Bed Room', Icons.king_bed_outlined),
+          RoomButton('Bed Room', Icons.king_bed_outlined, 3),
           // Kitchen Button
-          RoomButton('Kitchen', Icons.kitchen),
+          RoomButton('Kitchen', Icons.kitchen, 1),
           // Bath Room Button
-          RoomButton('Bath Room', Icons.bathtub_outlined),
+          RoomButton('Bath Room', Icons.bathtub_outlined, 1),
           // Store Room Button
-          RoomButton('Store Room', Icons.storage_outlined),
+          RoomButton('Store Room', Icons.storage_outlined, 1),
         ],
       ),
     );
@@ -106,21 +107,33 @@ class HomeBody extends StatelessWidget {
 class RoomButton extends StatefulWidget {
   final String roomName;
   final IconData icon;
+  final int numOfDevices;
 
-  RoomButton(this.roomName, this.icon, {Key key}) : super(key: key);
+  RoomButton(this.roomName, this.icon, this.numOfDevices, {Key key})
+      : super(key: key);
 
   @override
-  _RoomButtonState createState() => _RoomButtonState(roomName, icon);
+  _RoomButtonState createState() =>
+      _RoomButtonState(roomName, icon, numOfDevices);
 }
 
 class _RoomButtonState extends State<RoomButton> {
   String roomName;
   IconData icon;
+  int numofDevices;
 
-  _RoomButtonState(this.roomName, this.icon);
+  _RoomButtonState(this.roomName, this.icon, this.numofDevices);
 
   @override
   Widget build(BuildContext context) {
+    // Assign message for number of devices
+    String numOfDevicesMsg = numofDevices.toString() + ' device';
+
+    // Add an "s" at the end of the message if more than 1 device in a room
+    if (numofDevices > 1) {
+      numOfDevicesMsg += 's';
+    }
+
     return RaisedButton(
       onPressed: () {
         // Go to the desired page
@@ -156,6 +169,19 @@ class _RoomButtonState extends State<RoomButton> {
             ),
           ),
           // End of Room Name
+          SizedBox(
+            height: 2.5,
+          ),
+          // Number of Devices Text
+          Text(
+            numOfDevicesMsg,
+            style: TextStyle(
+              fontWeight: FontWeight.normal,
+              color: Colors.grey,
+              fontSize: 14,
+            ),
+          ),
+          // End of Number of Devices Text
         ],
       ),
     );
@@ -218,13 +244,20 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Retrieve current user logged in
+    final firebaseUser = context.watch<User>();
+    // Variable to retrieve the user data
     final dataList = Provider.of<List<DatabaseData>>(context) ?? [];
     String email = '';
     String username = '';
 
+    // Retrieve all user records
     dataList.forEach((data) {
-      email = data.email;
-      username = data.username;
+      // Check if the user email is equal to the current user's email
+      if (firebaseUser.email == data.email) {
+        email = data.email;
+        username = data.username;
+      }
     });
 
     return SizedBox(
@@ -244,7 +277,7 @@ class NavDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    // Username and Email
+                    // Username
                     Text(
                       username,
                       style: TextStyle(
@@ -253,17 +286,20 @@ class NavDrawer extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
+                    // End of Username
                     SizedBox(
                       height: 2.5,
                     ),
+                    // Email
                     Text(
                       email,
                       style: TextStyle(
+                        fontWeight: FontWeight.normal,
                         fontSize: 14,
                         color: Colors.white,
                       ),
                     ),
-                    // End of username and email
+                    // End of Email
                   ],
                 ),
               ),

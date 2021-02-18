@@ -20,6 +20,18 @@ class DatabaseService {
     });
   }
 
+  // Update Device Status Function
+  Future updateDeviceStatus(String email, bool isAirConditionerOn,
+      bool isLightOn, bool isDoorOn, bool isTvOn) async {
+    return await _deviceStatus.doc(uid).set({
+      'email': email,
+      'isAirConditionerOn': isAirConditionerOn,
+      'isLightOn': isLightOn,
+      'isDoorOn': isDoorOn,
+      'isTvOn': isTvOn,
+    });
+  }
+
   List<DatabaseData> _userInfoFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return DatabaseData(
@@ -33,8 +45,11 @@ class DatabaseService {
   List<DatabaseDeviceStatus> _deviceStatusFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return DatabaseDeviceStatus(
-        isAirConditionerOn: doc.data()['airConditionerStatus'] ?? false,
-        isLightOn: doc.data()['lightStatus'] ?? false,
+        email: doc.data()['email'] ?? '',
+        isAirConditionerOn: doc.data()['isAirConditionerOn'] ?? false,
+        isLightOn: doc.data()['isLightOn'] ?? false,
+        isDoorOn: doc.data()['isDoorOn'] ?? false,
+        isTvOn: doc.data()['isTvOn'] ?? false,
       );
     }).toList();
   }

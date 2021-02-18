@@ -43,8 +43,9 @@ class LoginPage extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            // Display Login Form
+            // Login Form
             LoginForm(),
+            // End of Login Form
             SizedBox(
               height: 30,
             ),
@@ -166,18 +167,20 @@ class _LoginFormState extends State<LoginForm> {
               // Execute if all the entered values are valid
               if (_formKey.currentState.validate()) {
                 // Attempt login account
-                dynamic result =
+                Future<String> result =
                     context.read<AuthenicationService>().loginAccount(
                           email: _thisEmail.currentState.value,
                           password: _thisPassword.currentState.value,
                         );
 
                 // Check if login successful
-                if (await result != null) {
+                if (await result == null) {
                   Navigator.pop(context);
                 } else {
-                  setState(
-                      () => formMessage = 'Email or password is incorrect!');
+                  // Display error message
+                  result.then((value) {
+                    setState(() => formMessage = value);
+                  });
                 }
               }
             },

@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primaryColor: Colors.indigo,
           primaryColorLight: Colors.indigo[200],
+          errorColor: Colors.red,
           // Input Field Theme
           inputDecorationTheme: InputDecorationTheme(
             isCollapsed: true,

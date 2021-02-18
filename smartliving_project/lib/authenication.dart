@@ -10,15 +10,18 @@ class AuthenicationService {
 
   // Logout Function
   Future<void> logOut() async {
+    // Logout the user
     await _firebaseAuth.signOut();
   }
 
   // Validate Password Function
   Future<bool> validatePassword(
       {User firebaseUser, String currentPassword}) async {
+    // Get the data of the authenication
     AuthCredential authCredentials = EmailAuthProvider.credential(
         email: firebaseUser.email, password: currentPassword);
     try {
+      // Attempt to authenicate and test if password is correct
       UserCredential authResult =
           await firebaseUser.reauthenticateWithCredential(authCredentials);
       return authResult.user != null;
@@ -30,18 +33,20 @@ class AuthenicationService {
 
   // Update Password Function
   Future<void> updatePassword({User firebaseUser, String newPassword}) async {
+    // Update new password
     firebaseUser.updatePassword(newPassword);
   }
 
   // Login Account Function
   Future<String> loginAccount({String email, String password}) async {
     try {
+      // Attempt to sign in if password is correct
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return "Success";
-    } on FirebaseAuthException catch (e) {
-      print(e.message);
       return null;
+    } on FirebaseAuthException catch (e) {
+      // Return error message
+      return e.message;
     }
   }
 
@@ -49,15 +54,17 @@ class AuthenicationService {
   Future<String> registerAccount(
       {String email, String username, int phoneNumber, String password}) async {
     try {
+      // Create Account
       UserCredential result = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
       User user = result.user;
+      // Update user info
       await DatabaseService(uid: user.uid)
           .updateUserInfo(email, username, phoneNumber);
-      return "Success";
-    } on FirebaseAuthException catch (e) {
-      print(e.message);
       return null;
+    } on FirebaseAuthException catch (e) {
+      // Return error message
+      return e.message;
     }
   }
 }

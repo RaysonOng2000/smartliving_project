@@ -35,6 +35,19 @@ class EditProfilePage extends StatelessWidget {
           ),
           shrinkWrap: true,
           children: <Widget>[
+            // Heading
+            Text(
+              'Edit Profile',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            // End of Heading
+            SizedBox(
+              height: 30,
+            ),
             EditProfileForm(email, username, phoneNumber),
           ],
         ),
@@ -134,6 +147,16 @@ class _EditProfileFormState extends State<EditProfileForm> {
             },
           ),
           // End of Email Field
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0, top: 5.0),
+            child: Text(
+              '* Email address is constant and cannot be changed!',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
+            ),
+          ),
           SizedBox(
             height: 30,
           ),
