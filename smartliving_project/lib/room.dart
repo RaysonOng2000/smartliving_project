@@ -41,6 +41,7 @@ class RoomPage extends StatelessWidget {
   // Device List Function
   Widget deviceList(roomName) {
     switch (roomName) {
+      // Living Room
       case "Living Room":
         return Column(
           children: <Widget>[
@@ -50,6 +51,8 @@ class RoomPage extends StatelessWidget {
           ],
         );
         break;
+      // End of Living Room
+      // Bed Room
       case "Bed Room":
         return Column(
           children: <Widget>[
@@ -59,6 +62,8 @@ class RoomPage extends StatelessWidget {
           ],
         );
         break;
+      // End of Bed Room
+      // Kitchen
       case "Kitchen":
         return Column(
           children: <Widget>[
@@ -66,6 +71,8 @@ class RoomPage extends StatelessWidget {
           ],
         );
         break;
+      // End of Kitchen
+      // Bath Room
       case "Bath Room":
         return Column(
           children: <Widget>[
@@ -73,6 +80,8 @@ class RoomPage extends StatelessWidget {
           ],
         );
         break;
+      // End of Bath Room
+      // Store Room
       case "Store Room":
         return Column(
           children: <Widget>[
@@ -80,6 +89,8 @@ class RoomPage extends StatelessWidget {
           ],
         );
         break;
+      // End of Store Room
+      // When the rooms specified above is not listed
       default:
         return Column();
     }
@@ -119,6 +130,7 @@ class RoomPage extends StatelessWidget {
           ),
           shrinkWrap: true,
           children: <Widget>[
+            // Display all devices for each room
             deviceList(roomName),
             SizedBox(
               height: 30.0,
@@ -179,7 +191,9 @@ class _DeviceButtonState extends State<DeviceButton> {
     // For displaying status
     String statusMsg = '';
 
+    // Retrieve all records
     dataList.forEach((data) {
+      // Check if the user email is equal to the current user's email
       if (email == data.email) {
         isAirConditionerOn = data.isAirConditionerOn;
         isLightOn = data.isLightOn;
@@ -190,18 +204,26 @@ class _DeviceButtonState extends State<DeviceButton> {
 
     // Assign inputs
     switch (deviceName) {
+      // Air Conditioner
       case "Air Conditioner":
         _switchValue = isAirConditionerOn;
         break;
+      // End of Air Conditioner
+      // Lights
       case "Lights":
         _switchValue = isLightOn;
         break;
+      // End of Lights
+      // Door
       case "Door":
         _switchValue = isDoorOn;
         break;
+      // End of Door
+      // Television
       case "Television":
         _switchValue = isTvOn;
         break;
+      // End of Television
     }
 
     // Check for switch status to display message
@@ -211,6 +233,7 @@ class _DeviceButtonState extends State<DeviceButton> {
       statusMsg = 'OFF';
     }
 
+    // Return Widget
     return Padding(
       padding: EdgeInsets.only(bottom: 15.0),
       child: RaisedButton(
@@ -267,18 +290,26 @@ class _DeviceButtonState extends State<DeviceButton> {
               onChanged: (val) async {
                 // Check the device that has been toggled
                 switch (deviceName) {
+                  // Air Conditioner
                   case "Air Conditioner":
                     isAirConditionerOn = val;
                     break;
+                  // End of Air Conditioner
+                  // Lights
                   case "Lights":
                     isLightOn = val;
                     break;
+                  // End of Lights
+                  // Door
                   case "Door":
                     isDoorOn = val;
                     break;
+                  // End of Door
+                  // Television
                   case "Television":
                     isTvOn = val;
                     break;
+                  // End of Television
                 }
                 // Update status
                 await DatabaseService(uid: firebaseUser.uid).updateDeviceStatus(

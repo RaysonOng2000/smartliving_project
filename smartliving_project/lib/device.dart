@@ -107,7 +107,9 @@ class _SwitchToggleState extends State<SwitchToggle> {
     // For Identification purpose
     String email = firebaseUser.email;
 
+    // Retrieve all records
     dataList.forEach((data) {
+      // Check if the user email is equal to the current user's email
       if (email == data.email) {
         isAirConditionerOn = data.isAirConditionerOn;
         isLightOn = data.isLightOn;
@@ -240,6 +242,7 @@ class _SliderBarState extends State<SliderBar> {
           max: max,
           divisions: divisions,
           label: _sliderValue.round().toString(),
+          // On changed
           onChanged: (double value) {
             setState(() {
               _sliderValue = value;
